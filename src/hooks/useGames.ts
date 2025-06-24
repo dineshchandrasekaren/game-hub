@@ -1,11 +1,34 @@
-import { useEffect, useState } from "react";
-import httpRequest from "../services/http-service";
+import { GameQuery } from "../App";
+import useData from "./useData";
+import { Genre } from "./useGenres";
 
-export const useGames = () => {
-  const [loading, setLoading] = useState();
-  const [error, setError] = useState();
-  const [data, setData] = useState();
+export interface Platform {
+  id: number;
+  name: string;
+  slug: string;
+}
 
-  useEffect(() => {});
-  return {};
-};
+export interface Game {
+  id: number;
+  name: string;
+  background_image: string;
+  parent_platforms: { platform: Platform }[];
+  metacritic: number;
+  rating_top: number;
+}
+
+const useGames = (gameQuery: GameQuery) =>
+  useData<Game>(
+    "/games",
+    {
+      params: {
+        genres: gameQuery.genre?.id,
+        platforms: gameQuery.platform?.id,
+        ordering: gameQuery.sortOrder,
+        search: gameQuery.searchText
+      },
+    },
+    [gameQuery]
+  );
+
+export default useGames;
